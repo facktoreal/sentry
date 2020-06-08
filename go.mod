@@ -1,4 +1,4 @@
-module yn.ee/facktoreal/sentry
+module github.com/facktoreal/sentry
 
 go 1.12
 
