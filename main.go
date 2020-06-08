@@ -3,8 +3,8 @@ package sentry
 import (
 	"errors"
 
+	"github.com/facktoreal/env"
 	"github.com/getsentry/raven-go"
-	"yn.ee/facktoreal/env"
 )
 
 // Init sentry configuration
