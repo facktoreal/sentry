@@ -6,21 +6,9 @@
 
 Sentry DNS
 
-### `ENV`
-
-Current system environment. Supported options are:
-
-* `DEV`
-* `STG`
-* `PROD`
-
 ### `RELEASE`
 
-Current release version of backend. Can be set in CI/CD using:
-
-```bash
-sed -i app.yaml -e "s/__RELEASE__/$CI_COMMIT_TAG/"
-```
+Current release version of backend. Can be set as ENV `RELEASE`
 
 ### Usage
 
@@ -37,7 +25,7 @@ import (
 func main()  {
     e := echo.New()
 
-    if err := sentry.Init(); err != nil {
+    if err := sentry.Init("%SENTRY_DSN%"); err != nil {
         // handle error
     }
 
@@ -47,7 +35,7 @@ func main()  {
 
 func init() {
     if err = srv.Update(data); err != nil {
-    	sentry.CaptureErrorAndWait(err, map[string]string{"category": "db"})
+    	sentry.CaptureErrorw(err, map[string]string{"category": "db"})
 
         return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
     }
