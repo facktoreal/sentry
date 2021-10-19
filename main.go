@@ -1,7 +1,6 @@
 package sentry
 
 import (
-	"errors"
 	"log"
 	"os"
 
@@ -40,8 +39,8 @@ func Init(dsnStr string) error {
 	}
 
 	// Set release version
-	if !MustPresent("RELEASE") {
-		return errors.New("'RELEASE' must be set")
+	if len(release) == 0 {
+		release = "latest"
 	}
 
 	err := sentryGo.Init(sentryGo.ClientOptions{
