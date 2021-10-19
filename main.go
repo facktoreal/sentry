@@ -8,14 +8,35 @@ import (
 	sentryGo "github.com/getsentry/sentry-go"
 )
 
+var(
+	env = "production"
+	release = ""
+	dsn = ""
+)
+
 // Init sentry configuration
-func Init() error {
-	if !MustPresent("SENTRY_DSN") {
-		return errors.New("'SENTRY_DSN' must be set")
+func Init(dsnStr string) error {
+	// check if sentry DSN is set
+	if len(dsnStr) == 0 {
+		log.Println("No Sentry DNS provided, sentry reporting disabled")
+
+		return nil
 	}
 
-	if !MustPresent("ENV") {
-		return errors.New("'ENV' must be set")
+	dsn = dsnStr
+
+	if len(MayGetString("ENV")) > 0 {
+		env = MayGetString("ENV")
+	}
+
+	// check if we provide release manually
+	if len(MayGetString("RELEASE")) > 0 {
+		release = MayGetString("RELEASE")
+	}
+
+	// check if we have release from appengine
+	if len(MayGetString("GAE_VERSION")) > 0 {
+		release = MayGetString("GAE_VERSION")
 	}
 
 	// Set release version
@@ -24,9 +45,9 @@ func Init() error {
 	}
 
 	err := sentryGo.Init(sentryGo.ClientOptions{
-		Dsn: MustGetString("SENTRY_DSN"),
-		Environment: MustGetString("ENV"),
-		Release: MustGetString("RELEASE"),
+		Dsn: dsn,
+		Environment: env,
+		Release: release,
 	})
 
 	if err != nil {
@@ -38,6 +59,10 @@ func Init() error {
 
 // CaptureError ...
 func CaptureError(err error, tags map[string]string) {
+	if len(dsn) == 0 {
+		return
+	}
+
 	sentryGo.WithScope(func(scope *sentryGo.Scope) {
 		scope.SetContext("Request", tags)
 
@@ -55,11 +80,11 @@ func MustPresent(key string) bool {
 	return true
 }
 
-// MustGetString ...
-func MustGetString(key string) string {
+// MayGetString ...
+func MayGetString(key string) string {
 	v := os.Getenv(key)
 	if v == "" {
-		log.Panicf("%s environment variable not set.", key)
+		return ""
 	}
 
 	return v
