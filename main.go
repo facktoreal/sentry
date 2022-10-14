@@ -7,10 +7,10 @@ import (
 	sentryGo "github.com/getsentry/sentry-go"
 )
 
-var(
-	env = "production"
+var (
+	env     = "production"
 	release = ""
-	dsn = ""
+	dsn     = ""
 )
 
 // Init sentry configuration
@@ -44,9 +44,9 @@ func Init(dsnStr string) error {
 	}
 
 	err := sentryGo.Init(sentryGo.ClientOptions{
-		Dsn: dsn,
+		Dsn:         dsn,
 		Environment: env,
-		Release: release,
+		Release:     release,
 	})
 
 	if err != nil {
@@ -57,7 +57,7 @@ func Init(dsnStr string) error {
 }
 
 // CaptureError ...
-func CaptureError(err error, tags map[string]string) {
+func CaptureError(err error, tags map[string]interface{}) {
 	if len(dsn) == 0 {
 		return
 	}
