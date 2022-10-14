@@ -57,13 +57,13 @@ func Init(dsnStr string) error {
 }
 
 // CaptureError ...
-func CaptureError(err error, tags map[string]interface{}) {
+func CaptureError(err error, tags map[string]string) {
 	if len(dsn) == 0 {
 		return
 	}
 
 	sentryGo.WithScope(func(scope *sentryGo.Scope) {
-		scope.SetContext("Request", tags)
+		scope.SetTags(tags)
 
 		sentryGo.CaptureException(err)
 	})
