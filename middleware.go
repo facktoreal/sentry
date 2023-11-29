@@ -5,6 +5,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Middleware() echo.MiddlewareFunc {
-	return sentryEcho.New(sentryEcho.Options{})
+func Middleware(options sentryEcho.Options) echo.MiddlewareFunc {
+	return sentryEcho.New(options)
 }

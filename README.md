@@ -18,26 +18,27 @@ Current release version of backend. Can be set in CI/CD using:
 package main
 
 import (
-    "github.com/labstack/echo/v4"
-    "yn.ee/facktoreal/sentry"
+	"github.com/facktoreal/sentry"
+	sentryEcho "github.com/getsentry/sentry-go/echo"
+	"github.com/labstack/echo/v4"
 )
 
-func main()  {
-    e := echo.New()
+func main() {
+	e := echo.New()
 
-    if err := sentry.Init("%SENTRY_DSN%"); err != nil {
-        // handle error
-    }
+	if err := sentry.Init("%SENTRY_DSN%"); err != nil {
+		// handle error
+	}
 
-    // Activate echo middleware
-    e.Use(sentry.Middleware())
+	// Activate echo middleware
+	e.Use(sentry.Middleware(sentryEcho.Options{}))
 }
 
 func init() {
-    if err = srv.Update(data); err != nil {
-    	sentry.CaptureErrorw(err, map[string]string{"category": "db"})
+	if err = srv.Update(data); err != nil {
+		sentry.CaptureErrorw(err, map[string]string{"category": "db"})
 
-        return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-    }
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
 }
 ```
